@@ -1,19 +1,47 @@
+def transpose(X):
+    assert len(X) and len(X[0])
+    return [[X[j][i] for j in range(len(X))] for i in range(len(X[0]))]
+
+
+def normalize(X):
+    """
+    subtracts the mean for each feature in feature matrix X
+    where values for features are missing, 0 (the mean value after normalization) is inserted
+    """
+    Xt = transpose(X)
+    for i in range(len(Xt)):
+        num_known_vals = 0
+        val_total = 0
+        for j in range(len(Xt[i])):
+            if type(Xt[i][j]) == int or type(Xt[i][j]) == float:
+                val_total += Xt[i][j]
+                num_known_vals += 1
+        mu = float(val_total)/num_known_vals
+        for j in range(len(Xt[i])):
+            Xt[i][j] = Xt[i][j] - mu if type(Xt[i][j]) == int or type(Xt[i][j]) == float else 0
+
+    return transpose(Xt)
+
+
 def encode_features(raw_features):
     """
     returns an all-numeric feature matrix that is mean-normalized and scaled,
     converting non-numeric features to multiple numeric features as appropriate
     """
-    X = []
+
+    X = [[] for i in range(len(raw_features))]
     for i,ex in enumerate(raw_features):
-        #push numeric features
-        X[i].extend(int(ex[4]),int(ex[5]),int(ex[6]),int(ex[8]))
+        #append Age,SibSp,Parch and Fare respectively
+        for j in [4,5,6,8]: X[i].append(float(ex[j]) if ex[j] else '')
         #encode Pclass
-        X[i].extend(1,0,0) if ex[0] == '1' else X[i].extend(0,1,0) if ex[0] == '2' else X[i].extend(0,0,1) if ex[0] == '3' else X[i].extend('','','')
+        X[i].extend([1,0,0] if ex[0] == '1' else [0,1,0] if ex[0] == '2' else [0,0,1] if ex[0] == '3' else ['','',''])
         #encode Sex
-        X[i].extend(1,0) if ex[3] == 'male' else X[i].extend(0,1) if ex[3] == 'female' else X[i].extend('','')
+        X[i].extend([1,0] if ex[3] == 'male' else [0,1] if ex[3] == 'female' else ['',''])
         #encode Embarked
-        X[i].extend(1,0,0) if ex[10] == 'c' else X[i].extend(0,1,0) if ex[10] == 's' else X[i].extend(0,0,1) if ex[10] == 'q' else X[i].extend('','','')
+        X[i].extend([1,0,0] if ex[10] == 'c' else [0,1,0] if ex[10] == 's' else [0,0,1] if ex[10] == 'q' else ['','',''])
+    X = normalize(X)
     return X
+
 
 def parse_examples(filename):
     """
@@ -32,4 +60,5 @@ def parse_examples(filename):
         raw_features.append(line[2:])
     #call encode_features to convert raw_features to a more useful feature matrix
     X = encode_features(raw_features)
-    return (X,y)
+    return X[0]
+    #return (X,y)
