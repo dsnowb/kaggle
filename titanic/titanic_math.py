@@ -7,7 +7,12 @@ def transpose(X):
     return [[X[j][i] for j in range(len(X))] for i in range(len(X[0]))]
 
 
-def rmatrix(nrow,ncol): return [[random.uniform(0,1) for i in range(ncol)] for j in range(nrow)]
+def rmatrix(nrow, ncol): return [[random.uniform(0,1) for i in range(ncol)] for j in range(nrow)]
 
 
-def sigmoid(z): return 1 / (1 + e**-z)
+def dot(u, v):
+    assert len(u) == len(v)
+    return sum([u[i]*v[i] for i in range(len(u))])
+
+
+def sigmoid(z): return 1 / (1 + e**-z) if z > -700 else 0.0
