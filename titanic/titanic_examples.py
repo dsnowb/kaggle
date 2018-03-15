@@ -1,24 +1,32 @@
+from math import sqrt
+
 def transpose(X):
     assert len(X) and len(X[0])
     return [[X[j][i] for j in range(len(X))] for i in range(len(X[0]))]
 
 
-def normalize(X):
+def standardize(X):
     """
-    subtracts the mean for each feature in feature matrix X
-    where values for features are missing, 0 (the mean value after normalization) is inserted
+    Standardizes values in X by subtracting the feature mean element-wise, then dividing by the
+    feature standard deviation. Where values for features are missing, 0 is substituted after
+    mean normalization and feature scaling
     """
     Xt = transpose(X)
+    n = len(Xt[0])
     for i in range(len(Xt)):
         num_known_vals = 0
         val_total = 0
-        for j in range(len(Xt[i])):
-            if type(Xt[i][j]) == int or type(Xt[i][j]) == float:
+        square_diff_sum = 0
+        for j in range(n):
+            if Xt[i][j] != '':
                 val_total += Xt[i][j]
                 num_known_vals += 1
+                square_diff_sum += abs(Xt[i][j])**2
         mu = float(val_total)/num_known_vals
-        for j in range(len(Xt[i])):
-            Xt[i][j] = Xt[i][j] - mu if type(Xt[i][j]) == int or type(Xt[i][j]) == float else 0
+        sigma = sqrt(square_diff_sum/num_known_vals)
+        print((mu,sigma))
+        for j in range(n):
+            Xt[i][j] = (Xt[i][j] - mu)/sigma if Xt[i][j] != '' else 0
 
     return transpose(Xt)
 
@@ -39,8 +47,8 @@ def encode_features(raw_features):
         X[i].extend([1,0] if ex[3] == 'male' else [0,1] if ex[3] == 'female' else ['',''])
         #encode Embarked
         X[i].extend([1,0,0] if ex[10] == 'c' else [0,1,0] if ex[10] == 's' else [0,0,1] if ex[10] == 'q' else ['','',''])
-    X = normalize(X)
-    return X
+
+    return standardize(X)
 
 
 def parse_examples(filename):
@@ -60,5 +68,5 @@ def parse_examples(filename):
         raw_features.append(line[2:])
     #call encode_features to convert raw_features to a more useful feature matrix
     X = encode_features(raw_features)
-    return X[0]
-    #return (X,y)
+    
+    return (X,y)
