@@ -1,6 +1,7 @@
 import titanic_examples as tex
 import titanic_math as tmath
 import titanic_regression as treg
+import titanic_predict as tpred
 
 
 def init(filename):
@@ -9,9 +10,12 @@ def init(filename):
     y = data[1]
     theta = tmath.rmatrix(1,len(X[0]))
     lamb = 0
-    alpha = .01
+    alpha = .8
 
-    treg.logistic_reg(X,y,theta[0],lamb,alpha)
+    theta = treg.logistic_reg(X,y,theta[0],lamb,alpha)
+
+    print('Accuracy: {}'.format(tpred.predict(X,y,theta)))
+
 #    print(len(X))
 #    print(len(y))
 #    print(len(X[0]))

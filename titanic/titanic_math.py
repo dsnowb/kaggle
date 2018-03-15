@@ -15,4 +15,7 @@ def dot(u, v):
     return sum([u[i]*v[i] for i in range(len(u))])
 
 
-def sigmoid(z): return 1 / (1 + e**-z) if z > -700 else 0.0
+def sigmoid(z):
+    try: h = 1 / (1 + e**-z)
+    except: h = 0.0
+    return h
