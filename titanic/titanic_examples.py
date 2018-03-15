@@ -21,7 +21,6 @@ def standardize(X):
                 square_diff_sum += abs(Xt[i][j])**2
         mu = float(val_total)/num_known_vals
         sigma = sqrt(square_diff_sum/num_known_vals)
-        print((mu, sigma))
         for j in range(n):
             Xt[i][j] = (Xt[i][j] - mu)/sigma if Xt[i][j] != '' else 0
 
