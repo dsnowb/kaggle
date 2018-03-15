@@ -20,27 +20,36 @@ def logistic_cost(X, y, theta, lamb):
 
 def logistic_reg(X, y, theta, lamb, alpha):
     m = len(y)
-    for numloop in range(200):
-        cost = logistic_cost(X,y,theta,lamb)
-        #update bias weight - no regularization
+    count = 0
+    max_count = 1000
+    cost = logistic_cost(X,y,theta,lamb)
+    while cost > 0 and count < max_count:
+        # update bias weight - no regularization
         new_theta = []
         grad_sum = 0
         for j, x in enumerate(X): grad_sum += (sigmoid(dot(x, theta)) - y[j])*x[0]
         grad = grad_sum / m
         new_theta.append(theta[0]-alpha*grad)
 
-        #update other weights
+        # update other weights
         for i, weight in enumerate(theta[1:]):
             grad_sum = 0
             for j, x in enumerate(X): grad_sum += (sigmoid(dot(x, theta)) - y[j])*x[i]
             grad = (grad_sum + lamb*weight) / m
             new_theta.append(weight-alpha*grad)
-        theta = new_theta
-        if cost < logistic_cost(X,y,theta,lamb):
-            print('Gradient descent is diverging')
-            break;
 
-    print('Final theta: {}'.format(theta))
+        # check for divergence
+        if not count%10:
+            new_cost = logistic_cost(X,y,new_theta,lamb)
+            if new_cost > cost:
+                print('Gradient descent is diverging')
+                break;
+        
+        # update values
+        cost = new_cost
+        theta = new_theta
+        count += 1
+
     print('Final Cost: {}'.format(logistic_cost(X,y,theta,lamb)))
 
     return theta

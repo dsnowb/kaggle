@@ -5,22 +5,18 @@ import titanic_predict as tpred
 
 
 def init(filename):
+    # Learning rate and regularization coefficients
+    lamb = 0
+    alpha = 1
+
+    # Read in data and initialize theta vector
     data = tex.parse_examples(filename)
     X = treg.add_bias(data[0])
     y = data[1]
-    theta = tmath.rmatrix(1,len(X[0]))
-    lamb = 0
-    alpha = .8
+    theta = tmath.rmatrix(1,len(X[0]))[0]
 
-    theta = treg.logistic_reg(X,y,theta[0],lamb,alpha)
+    # Train algorithm
+    theta = treg.logistic_reg(X,y,theta,lamb,alpha)
 
-    print('Accuracy: {}'.format(tpred.predict(X,y,theta)))
-
-#    print(len(X))
-#    print(len(y))
-#    print(len(X[0]))
-#    print(len(theta[0]))
-#    print('X:\n{}'.format(X))
-#    print('y:\n{}'.format(y))
-#    print('lamb:\n{}'.format(lamb))
-#    print('theta:\n{}'.format(theta))
+    # Check training set fit
+    print('Training accuracy: {}'.format(tpred.predict(X,y,theta)))
